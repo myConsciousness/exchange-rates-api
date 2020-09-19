@@ -22,6 +22,7 @@ import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 
 import org.thinkit.api.common.Communicable;
+import org.thinkit.api.common.catalog.ContentType;
 
 /**
  * 為替レートAPIへリクエストを送信する処理を定義したクラスです。為替レートAPIは欧州中央銀行のWeb APIを使用します。
@@ -39,15 +40,15 @@ public final class CurrencyExchangeRates implements Communicable {
 
     @Override
     public HttpResponse<String> send() {
+
         final HttpRequest request = HttpRequest.newBuilder().uri(URI.create(EXCHANGE_RATES_API))
-                .headers("Authorization", "Bearer aabbcc112233", "Accept", "application/json").GET().build();
+                .headers(ContentType.JSON.getTag()).GET().build();
 
         try {
             return HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
+            return null;
         }
-
-        return null;
     }
 }
