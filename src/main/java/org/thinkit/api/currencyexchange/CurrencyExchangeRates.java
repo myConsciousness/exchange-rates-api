@@ -85,6 +85,12 @@ public final class CurrencyExchangeRates implements Communicable {
      * @author Kato Shinya
      * @since 1.0
      * @version 1.0
+     *
+     * @see #withBaseCurrency(Currency)
+     * @see #withSymbolCurrencies(List)
+     * @see #withStartDateAt(String)
+     * @see #withEndDateAt(String)
+     * @see #build()
      */
     public static class Builder {
 
@@ -114,26 +120,82 @@ public final class CurrencyExchangeRates implements Communicable {
         private Builder() {
         }
 
+        /**
+         * 為替レート取得時の基軸通貨を設定します。
+         * <p>
+         * 初期値として {@link Currency#USA_DOLLAR} が設定されているため、USA Dollar
+         * を基軸通貨にする場合は当メソッドを呼び出す必要はありません。
+         *
+         * @param base 基軸通貨
+         * @return 自分自身のインスタンス
+         *
+         * @exception NullPointerException 引数として {@code null} が渡されたば場合
+         */
         public Builder withBaseCurrency(@NonNull Currency base) {
             this.base = base;
             return this;
         }
 
+        /**
+         * 取得する為替レート種別を設定します。渡された種別リストが空リストの場合は無視されます。
+         * <p>
+         * 全種別の為替レート種別を取得する場合は当メソッドを呼び出す必要はありません。
+         *
+         * @param symbols 取得する為替レート種別のリスト
+         * @return 自分自身のインスタンス
+         *
+         * @exception NullPointerException 引数として {@code null} が渡された場合
+         */
         public Builder withSymbolCurrencies(@NonNull List<Currency> symbols) {
             this.symbols = symbols;
             return this;
         }
 
+        /**
+         * 為替レートを取得する際の開始日を設定します。
+         * <p>
+         * 当メソッドの呼び出しは任意ですが、呼び出した際には {@link #withEndDateAt(String)}
+         * メソッドの呼び出しを確認してください。開始日が設定された状態で {@link #withEndDateAt(String)}
+         * メソッドが呼び出されず終了日が未設定の場合は開始日から {@link CurrencyExchangeRates}
+         * メソッドを呼び出した当日までの為替レートを取得します。
+         *
+         * @param startAt 開始日
+         * @return 自分自身のインスタンス
+         *
+         * @exception NullPointerException 引数として {@code null} が渡された場合
+         * @see #withEndDateAt(String)
+         */
         public Builder withStartDateAt(@NonNull String startAt) {
             this.startAt = startAt;
             return this;
         }
 
+        /**
+         * 為替レートを取得する際の終了日を設定します。
+         * <p>
+         * 当メソッドの呼び出しは任意ですが、呼び出した際には {@link #withStartDateAt(String)}
+         * メソッドの呼び出しを確認してください。終了日が設定された状態で {@link #withStartDateAt(String)}
+         * メソッドが呼び出されず開始日が未設定の場合は終了日から半年以内の為替レートを取得します。
+         *
+         * @param endAt 終了日
+         * @return 自分自身のインスタンス
+         *
+         * @exception NullPointerException 引数として {@code null} が渡された場合
+         * @see #withStartDateAt(String)
+         */
         public Builder withEndDateAt(@NonNull String endAt) {
             this.endAt = endAt;
             return this;
         }
 
+        /**
+         * 設定された値を基に {@link CurrencyExchangeRates} クラスの新しいインスタンスを生成し返却します。
+         * <p>
+         * リクエストパラメータの設定が必要ない場合は {@link Builder} クラスのインスタンスを生成し直接この
+         * {@link Builder#build()} メソッドを実行しても問題ありません。
+         *
+         * @return {@link CurrencyExchangeRates} クラスの新しいインスタンス
+         */
         public Communicable build() {
 
             final CurrencyExchangeRates api = new CurrencyExchangeRates();
@@ -149,7 +211,7 @@ public final class CurrencyExchangeRates implements Communicable {
     @Override
     public HttpResponse<String> send() {
 
-        final HttpRequest request = HttpRequest.newBuilder().uri(URI.create(EXCHANGE_RATES_API))
+        final HttpRequest request = HttpRequest.newBuilder().uri(URI.create(this.getRequestUrl()))
                 .headers(ContentType.JSON.getTag()).GET().build();
 
         try {
