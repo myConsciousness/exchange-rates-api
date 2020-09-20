@@ -31,7 +31,7 @@ import org.thinkit.api.currencyexchange.catalog.Currency;
 import lombok.NonNull;
 
 /**
- * 為替レートAPIへリクエストを送信する処理を定義したクラスです。為替レートAPIは欧州中央銀行のWeb APIを使用します。
+ * 為替レートAPIへリクエストを送信する処理を定義したクラスです。為替レートの取得は欧州中央銀行のWeb APIを使用します。
  *
  * @author Kato Shinya
  * @since 1.0
