@@ -241,8 +241,8 @@ public final class CurrencyExchangeRates implements Communicable {
         requestParameters.put("base", base.getTag());
 
         if (!StringUtils.isEmpty(this.startAt) && !StringUtils.isEmpty(this.endAt)) {
-            requestParameters.put("startAt", this.startAt);
-            requestParameters.put("endAt", this.endAt);
+            requestParameters.put("start_at", this.startAt);
+            requestParameters.put("end_at", this.endAt);
         } else if (!StringUtils.isEmpty(this.startAt) || !StringUtils.isEmpty(this.endAt)) {
             if (!StringUtils.isEmpty(this.startAt)) {
 
