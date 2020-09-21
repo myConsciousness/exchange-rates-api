@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.thinkit.api.common.Communicable;
 import org.thinkit.api.common.catalog.ContentType;
 import org.thinkit.api.common.exception.ApiRequestFailedException;
@@ -213,11 +214,9 @@ public final class CurrencyExchangeRates implements Communicable {
     @Override
     public HttpResponse<String> send() {
 
-        final Map<String> requestParameters = new HashMap<>();
-
         final HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(
-                        String.format("%s?%s", EXCHANGE_RATES_API, super.createRequestParameter(requestParameters))))
+                        String.format("%s?%s", EXCHANGE_RATES_API, this.createRequestParameter(this.getParameters()))))
                 .headers(ContentType.JSON.getTag()).GET().build();
 
         try {
@@ -225,5 +224,33 @@ public final class CurrencyExchangeRates implements Communicable {
         } catch (IOException | InterruptedException e) {
             throw new ApiRequestFailedException(e);
         }
+    }
+
+    /**
+     * {@link CurrencyExchangeRates}
+     * クラスのインスタンスを生成する際に設定された値を基に、リクエストパラメータを作成するためのパラメータマップを生成し連想配列として返却します。
+     * <p>
+     * 開始日と終了日は値が設定されている場合、または開始日と終了日のどちらかに値が設定されている場合にパラメータマップへ設定されます。
+     * 開始日と終了日のどちらにも値が設定されていない場合は開始日と終了日のパラメータは無視されます。
+     *
+     * @return {@link CurrencyExchangeRates} クラスのインスタンスを生成する際に設定された値を基に生成されたパラメータマップ
+     */
+    private Map<String, String> getParameters() {
+
+        final Map<String, String> requestParameters = new HashMap<>();
+        requestParameters.put("base", base.getTag());
+
+        if (!StringUtils.isEmpty(this.startAt) && !StringUtils.isEmpty(this.endAt)) {
+            requestParameters.put("startAt", this.startAt);
+            requestParameters.put("endAt", this.endAt);
+        } else if (!StringUtils.isEmpty(this.startAt) || !StringUtils.isEmpty(this.endAt)) {
+            if (!StringUtils.isEmpty(this.startAt)) {
+
+            } else {
+
+            }
+        }
+
+        return requestParameters;
     }
 }
