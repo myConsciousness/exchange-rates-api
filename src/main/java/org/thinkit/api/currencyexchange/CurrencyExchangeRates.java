@@ -21,7 +21,9 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.thinkit.api.common.Communicable;
 import org.thinkit.api.common.catalog.ContentType;
@@ -211,7 +213,11 @@ public final class CurrencyExchangeRates implements Communicable {
     @Override
     public HttpResponse<String> send() {
 
-        final HttpRequest request = HttpRequest.newBuilder().uri(URI.create(this.getRequestUrl()))
+        final Map<String> requestParameters = new HashMap<>();
+
+        final HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(
+                        String.format("%s?%s", EXCHANGE_RATES_API, super.createRequestParameter(requestParameters))))
                 .headers(ContentType.JSON.getTag()).GET().build();
 
         try {
