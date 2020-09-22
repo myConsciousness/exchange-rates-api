@@ -76,10 +76,6 @@ dependencies {
     implementation 'org.thinkit.api.common:api-commons:v1.0.10'
 }
 
-application {
-    mainClassName = 'org.thinkit.api.currencyexchange.Main'
-}
-
 test {
     useJUnitPlatform()
 
