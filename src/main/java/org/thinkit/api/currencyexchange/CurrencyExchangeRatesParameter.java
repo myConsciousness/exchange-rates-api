@@ -44,28 +44,28 @@ final class CurrencyExchangeRatesParameter implements RequestParameter, Serializ
      * 基軸通貨
      */
     @Getter
-    @ParameterMapping(key = "base")
+    @ParameterMapping
     private String base;
 
     /**
      * 取得対象のシンボル
      */
     @Getter
-    @ParameterMapping(key = "symbols")
+    @ParameterMapping
     private String symbols;
 
     /**
      * 検索開始日
      */
     @Getter
-    @ParameterMapping(key = "start_at")
+    @ParameterMapping(keyAlias = "start_at")
     private String startAt;
 
     /**
      * 検索終了日
      */
     @Getter
-    @ParameterMapping(key = "end_at")
+    @ParameterMapping(keyAlias = "end_at")
     private String endAt;
 
     /**
