@@ -21,13 +21,10 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-import org.apache.commons.lang3.StringUtils;
 import org.thinkit.api.common.Communicable;
-import org.thinkit.api.common.catalog.ContentType;
+import org.thinkit.api.common.entity.RequestParameter;
 import org.thinkit.api.common.exception.ApiRequestFailedException;
 import org.thinkit.api.currencyexchange.catalog.Currency;
 
@@ -48,24 +45,9 @@ public final class CurrencyExchangeRates implements Communicable {
     private static final String EXCHANGE_RATES_API = "https://api.exchangeratesapi.io/latest";
 
     /**
-     * 基軸通貨
+     * リクエストパラメーター
      */
-    private Currency base;
-
-    /**
-     * シンボルリスト
-     */
-    private List<Currency> symbols;
-
-    /**
-     * 検索開始日
-     */
-    private String startAt = "";
-
-    /**
-     * 検索終了日
-     */
-    private String endAt = "";
+    private RequestParameter requestParameter;
 
     /**
      * デフォルトコンストラクタ
@@ -201,11 +183,11 @@ public final class CurrencyExchangeRates implements Communicable {
          */
         public Communicable build() {
 
+            final RequestParameter requestParameter = CurrencyExchangeRatesParameter.of(this.base.getTag(), "JPY",
+                    "2020-01-01", "2020-03-01");
+
             final CurrencyExchangeRates api = new CurrencyExchangeRates();
-            api.base = this.base;
-            api.symbols = this.symbols;
-            api.startAt = this.startAt;
-            api.endAt = this.endAt;
+            api.requestParameter = requestParameter;
 
             return api;
         }
@@ -214,43 +196,15 @@ public final class CurrencyExchangeRates implements Communicable {
     @Override
     public HttpResponse<String> send() {
 
-        final HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(
-                        String.format("%s?%s", EXCHANGE_RATES_API, this.createRequestParameter(this.getParameters()))))
-                .headers(ContentType.JSON.getTag()).GET().build();
+        final String requestParameter = this.createRequestParameter(this.requestParameter);
+        final String requestUrl = String.format("%s?%s", EXCHANGE_RATES_API, requestParameter);
+
+        final HttpRequest request = HttpRequest.newBuilder().uri(URI.create(requestUrl)).GET().build();
 
         try {
             return HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
         } catch (IOException | InterruptedException e) {
             throw new ApiRequestFailedException(e);
         }
-    }
-
-    /**
-     * {@link CurrencyExchangeRates}
-     * クラスのインスタンスを生成する際に設定された値を基に、リクエストパラメータを作成するためのパラメータマップを生成し連想配列として返却します。
-     * <p>
-     * 開始日と終了日は値が設定されている場合、または開始日と終了日のどちらかに値が設定されている場合にパラメータマップへ設定されます。
-     * 開始日と終了日のどちらにも値が設定されていない場合は開始日と終了日のパラメータは無視されます。
-     *
-     * @return {@link CurrencyExchangeRates} クラスのインスタンスを生成する際に設定された値を基に生成されたパラメータマップ
-     */
-    private Map<String, String> getParameters() {
-
-        final Map<String, String> requestParameters = new HashMap<>();
-        requestParameters.put("base", base.getTag());
-
-        if (!StringUtils.isEmpty(this.startAt) && !StringUtils.isEmpty(this.endAt)) {
-            requestParameters.put("start_at", this.startAt);
-            requestParameters.put("end_at", this.endAt);
-        } else if (!StringUtils.isEmpty(this.startAt) || !StringUtils.isEmpty(this.endAt)) {
-            if (!StringUtils.isEmpty(this.startAt)) {
-
-            } else {
-
-            }
-        }
-
-        return requestParameters;
     }
 }
