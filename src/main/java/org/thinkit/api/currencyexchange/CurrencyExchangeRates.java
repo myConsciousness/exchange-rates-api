@@ -22,6 +22,7 @@ import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.thinkit.api.common.Communicable;
 import org.thinkit.api.common.entity.RequestParameter;
@@ -182,14 +183,32 @@ public final class CurrencyExchangeRates implements Communicable {
          * @return {@link CurrencyExchangeRates} クラスの新しいインスタンス
          */
         public Communicable build() {
-
-            final RequestParameter requestParameter = CurrencyExchangeRatesParameter.of(this.base.getTag(), "JPY",
-                    "2020-01-01", "2020-03-01");
+            final RequestParameter requestParameter = CurrencyExchangeRatesParameter.of(this.base.getTag(),
+                    this.getTsvSymbols(), "2020-01-01", "2020-03-01");
 
             final CurrencyExchangeRates api = new CurrencyExchangeRates();
             api.requestParameter = requestParameter;
 
             return api;
+        }
+
+        /**
+         * 設定された検索対象のシンボルをHTTPリクエスト時に使用する際のTSV形式へ変換して文字列型として返却します。 検索対象のシンボルを設定する
+         * {@link #withSymbolCurrencies(List)} メソッドが呼び出されなかった場合、または検索対象のシンボルが
+         * {@code null} または空の場合は空文字列を返却します。空文字列が返却された場合は、後続処理の
+         * {@link Communicable#createRequestParameter(RequestParameter)}
+         * メソッドで当該パラメータの設定は除外されます。
+         *
+         * @return 検索対象のシンボルが設定されている場合はTSV形式へ変換されたシンボル。検索対象のシンボルが {@code null}
+         *         または空の場合は空文字列
+         */
+        private String getTsvSymbols() {
+
+            if (this.symbols == null || this.symbols.isEmpty()) {
+                return "";
+            }
+
+            return String.join(",", this.symbols.stream().map(Currency::getTag).collect(Collectors.toList()));
         }
     }
 

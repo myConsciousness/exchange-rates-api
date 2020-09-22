@@ -52,7 +52,7 @@ final class CurrencyExchangeRatesParameter implements RequestParameter, Serializ
      */
     @Getter
     @ParameterMapping(key = "symbols")
-    private String symbol;
+    private String symbols;
 
     /**
      * 検索開始日
@@ -78,16 +78,16 @@ final class CurrencyExchangeRatesParameter implements RequestParameter, Serializ
      * コンストラクタ
      *
      * @param base    基軸通貨
-     * @param symbol  検索対象のシンボル
+     * @param symbols 検索対象のシンボル
      * @param startAt 検索開始日
      * @param endAt   検索終了日
      *
      * @exception NullPointerException 引数として {@code null} が渡された場合
      */
-    private CurrencyExchangeRatesParameter(@NonNull String base, @NonNull String symbol, @NonNull String startAt,
+    private CurrencyExchangeRatesParameter(@NonNull String base, @NonNull String symbols, @NonNull String startAt,
             @NonNull String endAt) {
         this.base = base;
-        this.symbol = symbol;
+        this.symbols = symbols;
         this.startAt = startAt;
         this.endAt = endAt;
     }
@@ -101,7 +101,7 @@ final class CurrencyExchangeRatesParameter implements RequestParameter, Serializ
      */
     private CurrencyExchangeRatesParameter(@NonNull CurrencyExchangeRatesParameter currencyExchangeRatesParameter) {
         this.base = currencyExchangeRatesParameter.getBase();
-        this.symbol = currencyExchangeRatesParameter.getSymbol();
+        this.symbols = currencyExchangeRatesParameter.getSymbols();
         this.startAt = currencyExchangeRatesParameter.getStartAt();
         this.endAt = currencyExchangeRatesParameter.getEndAt();
     }
@@ -111,16 +111,16 @@ final class CurrencyExchangeRatesParameter implements RequestParameter, Serializ
      * クラスの新しいインスタンスを生成し返却します。
      *
      * @param base    基軸通貨
-     * @param symbol  検索対象のシンボル
+     * @param symbols 検索対象のシンボル
      * @param startAt 検索開始日
      * @param endAt   検索終了日
      * @return {@link CurrencyExchangeReatesParameter} クラスの新しいインスタンス
      *
      * @exception NullPointerException 引数として {@code null} が渡された場合
      */
-    public static RequestParameter of(@NonNull String base, @NonNull String symbol, @NonNull String startAt,
+    public static RequestParameter of(@NonNull String base, @NonNull String symbols, @NonNull String startAt,
             @NonNull String endAt) {
-        return new CurrencyExchangeRatesParameter(base, symbol, startAt, endAt);
+        return new CurrencyExchangeRatesParameter(base, symbols, startAt, endAt);
     }
 
     /**
