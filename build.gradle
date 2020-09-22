@@ -73,7 +73,11 @@ dependencies {
 	annotationProcessor 'org.projectlombok:lombok:1.18.12'
 
     implementation 'org.thinkit.api.catalog:catalog-api:v1.0.1'
-    implementation 'org.thinkit.api.common:api-commons:v1.0.9'
+    implementation 'org.thinkit.api.common:api-commons:v1.0.10'
+}
+
+application {
+    mainClassName = 'org.thinkit.api.currencyexchange.Main'
 }
 
 test {
