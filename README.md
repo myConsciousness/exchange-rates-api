@@ -2,7 +2,7 @@
 
 ## How To Use
 
-Exchange Rates API mein repositiory,
+Exchange Rates API main repositiory,
 
 ## License
 
