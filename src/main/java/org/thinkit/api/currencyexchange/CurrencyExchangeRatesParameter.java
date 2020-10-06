@@ -107,14 +107,13 @@ final class CurrencyExchangeRatesParameter implements RequestParameter, Serializ
     }
 
     /**
-     * 引数として渡された情報を基に {@link CurrencyExchangeReatesParameter}
-     * クラスの新しいインスタンスを生成し返却します。
+     * 引数として渡された情報を基に {@link CurrencyExchangeRatesParameter} クラスの新しいインスタンスを生成し返却します。
      *
      * @param base    基軸通貨
      * @param symbols 検索対象のシンボル
      * @param startAt 検索開始日
      * @param endAt   検索終了日
-     * @return {@link CurrencyExchangeReatesParameter} クラスの新しいインスタンス
+     * @return {@link CurrencyExchangeRatesParameter} クラスの新しいインスタンス
      *
      * @exception NullPointerException 引数として {@code null} が渡された場合
      */
@@ -124,11 +123,11 @@ final class CurrencyExchangeRatesParameter implements RequestParameter, Serializ
     }
 
     /**
-     * 引数として渡されたオブジェクトの情報を基に {@link CurrencyExchangeRetesParameter}
+     * 引数として渡されたオブジェクトの情報を基に {@link CurrencyExchangeRatesParameter}
      * クラスの新しいインスタンスを生成し返却します。
      *
      * @param currencyExchangeRatesParameter 通貨為替レートパラメータ
-     * @return {@link CurrencyExchangeRetesParameter} クラスの新しいインスタンス
+     * @return {@link CurrencyExchangeRatesParameter} クラスの新しいインスタンス
      *
      * @exception NullPointerException 引数として {@code null} が渡された場合
      */
