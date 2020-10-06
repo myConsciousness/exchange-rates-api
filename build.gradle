@@ -14,7 +14,6 @@
 
 plugins {
     id 'java'
-    id 'java-library'
     id 'application'
     id 'maven-publish'
     id 'com.palantir.git-version' version '0.12.2'
@@ -64,7 +63,7 @@ dependencies {
 
     implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.0'
     implementation 'org.thinkit.api.catalog:catalog-api:v1.0.1'
-    api 'org.thinkit.api.common:api-commons:v1.0.12'
+    implementation 'org.thinkit.api.common:api-commons:v1.0.12'
     implementation 'org.thinkit.common:precondition-validator:v1.0.8'
 
     compileOnly 'org.projectlombok:lombok:1.18.12'
