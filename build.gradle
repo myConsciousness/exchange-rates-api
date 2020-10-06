@@ -70,10 +70,6 @@ dependencies {
 	annotationProcessor 'org.projectlombok:lombok:1.18.12'
 }
 
-application {
-    mainClassName = 'org.thinkit.api.currencyexchange.Main'
-}
-
 test {
     useJUnitPlatform()
 
