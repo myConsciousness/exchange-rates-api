@@ -152,7 +152,7 @@ public final class CurrencyExchangeRates implements Communicable {
          * 当メソッドの呼び出しは任意ですが、呼び出した際には {@link #withEndDateAt(String)}
          * メソッドの呼び出しを行い終了日を設定してください。
          * <p>
-         * 開始日は {@code "yyyyMMdd"} 形式で設定してください。
+         * 開始日は {@code yyyyMMdd} 形式で設定してください。
          *
          * @param startAt 開始日
          * @return 自分自身のインスタンス
@@ -171,7 +171,7 @@ public final class CurrencyExchangeRates implements Communicable {
          * 当メソッドの呼び出しは任意ですが、呼び出した際には {@link #withStartDateAt(String)}
          * メソッドの呼び出しを行い開始日を設定してください。
          * <p>
-         * 終了日は {@code "yyyyMMdd"} 形式で設定してください。
+         * 終了日は {@code yyyyMMdd} 形式で設定してください。
          *
          * @param endAt 終了日
          * @return 自分自身のインスタンス
@@ -234,8 +234,17 @@ public final class CurrencyExchangeRates implements Communicable {
         }
 
         /**
-         * 日付の入力データを検証します。
+         * 引数として与えれられた {@code date} を {@code yyyy-MM-dd} 形式に変換し返却します。
+         * <p>
+         * 引数として渡される日付は {@code yyyyMMdd} 形式であることを想定しており、想定外の形式で日付が渡された場合は
+         * {@link InvalidDateFormatException} が実行時に発生します。
          *
+         * @param date 変換対象の日付（yyyyMMdd形式）
+         * @return {@code yyyy-MM-dd} 形式に変換された日付
+         *
+         * @exception NullPointerException       引数として {@code null} が渡された場合
+         * @exception InvalidDateFormatException 引数として渡された {@code date} が
+         *                                       {@code yyyyMMdd} 形式ではない場合
          */
         private String toDateWithHyphen(@NonNull String date) {
 
