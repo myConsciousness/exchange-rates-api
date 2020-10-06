@@ -215,8 +215,8 @@ public final class CurrencyExchangeRates implements Communicable {
     @Override
     public HttpResponse<String> send() {
 
-        final String requestParameter = this.createRequestParameter(this.requestParameter);
-        final String requestUrl = String.format("%s?%s", EXCHANGE_RATES_API, requestParameter);
+        final String requestParameter = this.createQuery(this.requestParameter);
+        final String requestUrl = String.format("%s%s", EXCHANGE_RATES_API, requestParameter);
 
         final HttpRequest request = HttpRequest.newBuilder().uri(URI.create(requestUrl)).GET().build();
 
