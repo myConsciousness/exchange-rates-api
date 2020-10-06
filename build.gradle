@@ -14,6 +14,7 @@
 
 plugins {
     id 'java'
+    id 'java-library'
     id 'application'
     id 'maven-publish'
     id 'com.palantir.git-version' version '0.12.2'
@@ -31,11 +32,11 @@ publishing {
 
     repositories {
         maven {
-            name = "GitHubPackages"
-            url = uri("https://maven.pkg.github.com/myConsciousness/exchange-rates-api")
+            name = 'GitHubPackages'
+            url = uri('https://maven.pkg.github.com/myConsciousness/exchange-rates-api')
             credentials {
-                username = System.getenv("GITHUB_USER")
-                password = System.getenv("GITHUB_PUBLISH_TOKEN")
+                username = System.getenv('GITHUB_USER')
+                password = System.getenv('GITHUB_PUBLISH_TOKEN')
             }
         }
     }
@@ -43,37 +44,35 @@ publishing {
 
 repositories {
     maven {
-        name = "GitHubPackages"
-        url = uri("https://maven.pkg.github.com/myConsciousness/exchange-rates-api")
+        name = 'GitHubPackages'
+        url = uri('https://maven.pkg.github.com/myConsciousness/exchange-rates-api')
         credentials {
-            username = System.getenv("GITHUB_USER")
-            password = System.getenv("GITHUB_DOWNLOAD_PACKAGE_TOKEN")
+            username = System.getenv('GITHUB_USER')
+            password = System.getenv('GITHUB_DOWNLOAD_PACKAGE_TOKEN')
         }
     }
 
     jcenter()
 }
 
-tasks.withType(JavaCompile) {
-    options.encoding = "UTF-8"
-}
-
-tasks.withType(Javadoc) {
-    options.encoding = "UTF-8"
-}
+[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 
 dependencies {
     implementation 'com.google.guava:guava:29.0-jre'
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.2'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.6.2'
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.5.2'
+    testImplementation 'org.junit.jupiter:junit-jupiter-params:5.5.2'
 
-    compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.0'
+    implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.0'
+    implementation 'org.thinkit.api.catalog:catalog-api:v1.0.1'
+    api 'org.thinkit.api.common:api-commons:v1.0.11'
+    implementation 'org.thinkit.common:precondition-validator:v1.0.3'
 
     compileOnly 'org.projectlombok:lombok:1.18.12'
 	annotationProcessor 'org.projectlombok:lombok:1.18.12'
+}
 
-    implementation 'org.thinkit.api.catalog:catalog-api:v1.0.1'
-    implementation 'org.thinkit.api.common:api-commons:v1.0.10'
+application {
+    mainClassName = 'org.thinkit.api.currencyexchange.Main'
 }
 
 test {
@@ -84,4 +83,13 @@ test {
         events 'started', 'skipped', 'passed', 'failed'
         exceptionFormat 'full'
     }
+}
+
+task("reference", type: Javadoc) {
+    source = sourceSets.main.allJava
+    title = 'Exchange Rates API'
+    options.links('https://docs.oracle.com/en/java/javase/13/docs/api/')
+    options.charSet("utf-8")
+    options.showFromPublic()
+    destinationDir = file('./docs')
 }
