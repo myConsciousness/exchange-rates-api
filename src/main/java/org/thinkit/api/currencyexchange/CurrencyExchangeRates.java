@@ -20,11 +20,15 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
 import org.thinkit.api.common.Communicable;
+import org.thinkit.api.common.Resource;
 import org.thinkit.api.common.entity.RequestParameter;
 import org.thinkit.api.common.exception.ApiRequestFailedException;
 import org.thinkit.api.currencyexchange.catalog.Currency;
@@ -43,7 +47,12 @@ public final class CurrencyExchangeRates implements Communicable {
     /**
      * API呼び出し時のURL
      */
-    private static final String EXCHANGE_RATES_API = "https://api.exchangeratesapi.io/latest";
+    private static final String EXCHANGE_RATES_API = "https://api.exchangeratesapi.io";
+
+    /**
+     * 為替レートAPIのリソース
+     */
+    private Resource resource;
 
     /**
      * リクエストパラメーター
@@ -141,9 +150,9 @@ public final class CurrencyExchangeRates implements Communicable {
          * 為替レートを取得する際の開始日を設定します。
          * <p>
          * 当メソッドの呼び出しは任意ですが、呼び出した際には {@link #withEndDateAt(String)}
-         * メソッドの呼び出しを確認してください。開始日が設定された状態で {@link #withEndDateAt(String)}
-         * メソッドが呼び出されず終了日が未設定の場合は開始日から {@link CurrencyExchangeRates}
-         * メソッドを呼び出した当日までの為替レートを取得します。
+         * メソッドの呼び出しを行い終了日を設定してください。
+         * <p>
+         * 開始日は {@code "yyyyMMdd"} 形式で設定してください。
          *
          * @param startAt 開始日
          * @return 自分自身のインスタンス
@@ -160,8 +169,9 @@ public final class CurrencyExchangeRates implements Communicable {
          * 為替レートを取得する際の終了日を設定します。
          * <p>
          * 当メソッドの呼び出しは任意ですが、呼び出した際には {@link #withStartDateAt(String)}
-         * メソッドの呼び出しを確認してください。終了日が設定された状態で {@link #withStartDateAt(String)}
-         * メソッドが呼び出されず開始日が未設定の場合は終了日から半年以内の為替レートを取得します。
+         * メソッドの呼び出しを行い開始日を設定してください。
+         * <p>
+         * 終了日は {@code "yyyyMMdd"} 形式で設定してください。
          *
          * @param endAt 終了日
          * @return 自分自身のインスタンス
@@ -179,15 +189,27 @@ public final class CurrencyExchangeRates implements Communicable {
          * <p>
          * リクエストパラメータの設定が必要ない場合は {@link Builder} クラスのインスタンスを生成し直接この
          * {@link Builder#build()} メソッドを実行しても問題ありません。
+         * <p>
+         * {@link #withStartDateAt(String)} メソッドと {@link #withEndDateAt(String)}
+         * メソッドが呼び出され、開始日と終了日が設定されている場合は履歴リソースから為替情報を取得します。
+         * 開始日と終了日が共に空文字列の場合は最新リソースから為替情報を取得します。
          *
          * @return {@link CurrencyExchangeRates} クラスの新しいインスタンス
          */
         public Communicable build() {
-            final RequestParameter requestParameter = CurrencyExchangeRatesParameter.of(this.base.getTag(),
-                    this.getTsvSymbols(), "2020-01-01", "2020-03-01");
 
             final CurrencyExchangeRates api = new CurrencyExchangeRates();
-            api.requestParameter = requestParameter;
+
+            if (StringUtils.isEmpty(this.startAt) && StringUtils.isEmpty(this.endAt)) {
+                api.resource = CurrencyExchangeRatesResource.LATEST;
+            } else if (!StringUtils.isEmpty(this.startAt) && !StringUtils.isEmpty(this.endAt)) {
+                api.resource = CurrencyExchangeRatesResource.HISTORY;
+            } else {
+                throw new InvalidDateException();
+            }
+
+            api.requestParameter = CurrencyExchangeRatesParameter.of(this.base.getTag(), this.getTsvSymbols(),
+                    this.toDateWithHyphen(this.startAt), this.toDateWithHyphen(this.endAt));
 
             return api;
         }
@@ -210,13 +232,34 @@ public final class CurrencyExchangeRates implements Communicable {
 
             return String.join(",", this.symbols.stream().map(Currency::getTag).collect(Collectors.toList()));
         }
+
+        /**
+         * 日付の入力データを検証します。
+         *
+         */
+        private String toDateWithHyphen(@NonNull String date) {
+
+            if (StringUtils.isEmpty(date)) {
+                return "";
+            }
+
+            final SimpleDateFormat fromSdf = new SimpleDateFormat("yyyyMMdd");
+            final SimpleDateFormat toSdf = new SimpleDateFormat("yyyy-MM-dd");
+
+            try {
+                return toSdf.format(fromSdf.parse(date));
+            } catch (ParseException e) {
+                throw new InvalidDateFormatException(e);
+            }
+        }
     }
 
     @Override
     public HttpResponse<String> send() {
 
         final String requestParameter = this.createQuery(this.requestParameter);
-        final String requestUrl = String.format("%s%s", EXCHANGE_RATES_API, requestParameter);
+        final String requestUrl = String.format("%s/%s/%s", EXCHANGE_RATES_API, resource.getResource(),
+                requestParameter);
 
         final HttpRequest request = HttpRequest.newBuilder().uri(URI.create(requestUrl)).GET().build();
 
