@@ -15,7 +15,7 @@
 package org.thinkit.api.currencyexchange;
 
 /**
- * Thrown to indicate that a method has been passed an invalid format of date.
+ * Thrown to indicate that a method has been passed an invalid date.
  *
  * @author Kato Shinya
  * @since 1.0
